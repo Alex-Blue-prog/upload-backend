@@ -1,0 +1,72 @@
+const routes = require("express").Router();
+const multer = require('multer');
+const multerConfig = require('./config/multer');
+const Post = require("./models/Post");
+
+routes.get('/posts', async (req, res) => {
+    // const posts = await Post.find({}, {url: 1});
+    const posts = await Post.find();
+
+    const getJustImgs = posts.filter(value => {
+        if(value.name.indexOf(".mp4") === -1) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+
+    return res.status(200).json(getJustImgs);
+});
+
+routes.post('/posts', multer(multerConfig).single('file'), async (req,res)=> {
+    console.log(req.file);
+
+    const {originalname: name, size, key, location: url = ""} = req.file;
+
+    const post = await Post.create({
+        name,
+        size,
+        key,
+        url,
+    });
+
+   res.status(200).json(post);
+});
+
+routes.delete('/posts/:id', async (req,res) => {
+    const post = await Post.findById(req.params.id);
+
+    await post.remove();
+
+    return res.send();
+});
+
+module.exports = routes;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// fs.stat(path.resolve(__dirname, "..", "tmp", "uploads", "3d1d54744d238b8a18d93ed855742887-vergil.jpg"), (err, stats) => {
+//     if(err) {
+//         console.log(`file does not exist`);
+//     } else {
+//         console.log(stats)
+//     }
+// })
