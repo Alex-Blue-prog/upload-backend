@@ -19,9 +19,9 @@ routes.post('/posts', multer(multerConfig).single('file'), async (req,res)=> {
     const checkUploadsNumber = await Post.countDocuments();
 
     //checar nuúmero de uploads do usuario
-    if(checkUploadsNumber >= 5) {
-        res.status(406).json("Número de uploads maximo é de 5");
-    }
+//     if(checkUploadsNumber >= 5) {
+//         res.status(406).json("Número de uploads maximo é de 5");
+//     }
 
     const post = await Post.create({
         name,
