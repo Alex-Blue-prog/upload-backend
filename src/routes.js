@@ -7,21 +7,21 @@ routes.get('/posts', async (req, res) => {
     // const posts = await Post.find({}, {url: 1});
     const posts = await Post.find();
 
-    const getJustImgs = posts.filter(value => {
-        if(value.name.indexOf(".mp4") === -1) {
-            return true;
-        } else {
-            return false;
-        }
-    });
 
-    return res.status(200).json(getJustImgs);
+    return res.status(200).json(posts);
 });
 
 routes.post('/posts', multer(multerConfig).single('file'), async (req,res)=> {
     console.log(req.file);
 
     const {originalname: name, size, key, location: url = ""} = req.file;
+
+    const checkUploadsNumber = await Post.countDocuments();
+
+    //checar nuúmero de uploads do usuario
+    if(checkUploadsNumber >= 5) {
+        res.status(406).json("Número de uploads maximo é de 5");
+    }
 
     const post = await Post.create({
         name,
